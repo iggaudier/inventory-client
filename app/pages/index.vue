@@ -17,7 +17,9 @@
  
         <p class="card__eyebrow">Welcome to</p>
  
-        <h1 class="card__title">Lily</h1>
+        <h1 class="card__title">L.i.l.y</h1>
+
+        <p class="card__eyebrow">Library for Interior Layouts & Yields</p>
         <p class="card__subtitle">
           A working library of every material your studio has ever
           specified, sourced, or saved.
