@@ -6,12 +6,13 @@
       <div class="card" :class="{ 'card--in': mounted }">
         <span class="card__punch" aria-hidden="true" />
 
-        <p class="card__eyebrow text-center">Welcome back</p>
+        <p class="card__eyebrow">Welcome back to</p>
 
-        <h1 class="card__title text-center">L.i.l.y</h1>
+        <h1 class="card__title">L.i.l.y</h1>
 
-        <p class="text-center">
-          Sign in to your account
+        <p class="card__subtitle">
+          Sign in to your account to keep working with your studio's
+          material library.
         </p>
 
         <form class="card__form" @submit.prevent="handleSignIn">
@@ -22,7 +23,7 @@
               v-model="email"
               type="email"
               autocomplete="email"
-              placeholder="your.email@example.com"
+              placeholder="you@example.com"
               class="field__input"
             />
           </div>
@@ -96,16 +97,27 @@ async function handleSignIn() {
 
   loading.value = true
 
-  try {
-    // TODO: replace with your real auth call, e.g.:
-    // await $fetch('/api/auth/login', {
-    //   method: 'POST',
-    //   body: { email: email.value, password: password.value }
-    // })
+  const config = useRuntimeConfig()
 
-    await router.push('/dashboard')
+  try {
+    const response = await $fetch(`${config.public.apiBase}/api/login`, {
+      method: 'POST',
+      body: { email: email.value, password: password.value }
+    })
+
+    const token = useCookie('auth_token', {
+      maxAge: 60 * 60 * 24 * 7, // 7 days, adjust as needed
+      sameSite: 'lax'
+    })
+    token.value = response.token
+
+    if (response.must_change_password) {
+      await router.push('/auth/change-password')
+    } else {
+      await router.push('/dashboard')
+    }
   } catch (err) {
-    errorMsg.value = 'Invalid email or password.'
+    errorMsg.value = err?.data?.message || 'Invalid email or password.'
   } finally {
     loading.value = false
   }
@@ -114,7 +126,14 @@ async function handleSignIn() {
 
 <style scoped>
 /*
-  styles that are not globally declared
+  These rely on your existing global classes:
+  .landing, .landing__field, .landing__stage, .card, .card--in,
+  .card__punch, .card__eyebrow, .card__title, .card__subtitle,
+  .btn, .btn--primary, .btn--ghost, .version-tag, .version-tag--in,
+  .version-tag__dot
+
+  Only the form-specific bits below are new (not in the landing page),
+  written to sit visually inside the same .card without breaking it.
 */
 
 .card__form {
