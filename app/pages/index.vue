@@ -26,10 +26,10 @@
         </p>
  
         <div class="card__actions">
-            <NuxtLink to="/login" class="btn btn--primary">
+            <NuxtLink to="auth/login" class="btn btn--primary">
               Sign in
             </NuxtLink>
-            <NuxtLink to="/request-access" class="btn btn--ghost">
+            <NuxtLink to="auth/request-access" class="btn btn--ghost">
               Request Access
             </NuxtLink>
         </div>
