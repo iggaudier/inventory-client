@@ -44,6 +44,7 @@
 </template>
  
 <script setup lang="ts">
+definePageMeta({ middleware: 'guest' })
 const mounted = ref(false)
  
 const swatches = ['#7A5A38', '#B8834A', '#C99B52', '#5F7466']

@@ -6,36 +6,47 @@
       <div class="card" :class="{ 'card--in': mounted }">
         <span class="card__punch" aria-hidden="true" />
 
-        <p class="card__eyebrow">Request access to</p>
-
-        <h1 class="card__title">L.i.l.y</h1>
+        <p class="card__eyebrow">Update your</p>
+        <h1 class="card__title">Password</h1>
 
         <p class="card__subtitle">
-          Tell us a bit about you and your studio. We'll review your
-          request and get back to you by email.
+          Choose a new password to secure your account.
         </p>
 
         <form v-if="!submitted" class="card__form" @submit.prevent="handleSubmit">
           <div class="field">
-            <label for="email" class="field__label">Email</label>
+            <label for="current_password" class="field__label">Current password</label>
             <input
-              id="email"
-              v-model="email"
-              type="email"
-              autocomplete="email"
-              placeholder="your.email@example.com""
+              id="current_password"
+              v-model="currentPassword"
+              type="password"
+              autocomplete="current-password"
+              placeholder="••••••••"
               class="field__input"
             />
           </div>
 
           <div class="field">
-            <label for="message" class="field__label">Message</label>
-            <textarea
-              id="message"
-              v-model="message"
-              rows="4"
-              placeholder="Tell us about your studio and why you'd like access..."
-              class="field__input field__input--textarea"
+            <label for="new_password" class="field__label">New password</label>
+            <input
+              id="new_password"
+              v-model="newPassword"
+              type="password"
+              autocomplete="new-password"
+              placeholder="••••••••"
+              class="field__input"
+            />
+          </div>
+
+          <div class="field">
+            <label for="new_password_confirmation" class="field__label">Confirm new password</label>
+            <input
+              id="new_password_confirmation"
+              v-model="newPasswordConfirmation"
+              type="password"
+              autocomplete="new-password"
+              placeholder="••••••••"
+              class="field__input"
             />
           </div>
 
@@ -49,44 +60,38 @@
               class="btn btn--primary"
               :disabled="loading"
             >
-              {{ loading ? 'Sending...' : 'Send Request' }}
+              {{ loading ? 'Updating...' : 'Update Password' }}
             </button>
           </div>
         </form>
 
         <div v-else class="card__success">
           <p class="card__success-text">
-            Thanks — your request has been sent. We'll be in touch soon.
+            Your password has been updated.
           </p>
         </div>
-
-        <p class="card__footer">
-          Already have access?
-          <NuxtLink to="/auth/login" class="card__footer-link">
-            Sign in
-          </NuxtLink>
-        </p>
       </div>
-
-      <p class="version-tag" :class="{ 'version-tag--in': mounted }">
-        <span class="version-tag__dot" aria-hidden="true" />
-        Lily v0.1.0 — early access
-      </p>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ middleware: 'guest' })
+definePageMeta({
+  middleware: 'auth'
+})
+
 const mounted = ref(false)
-const email = ref('')
-const message = ref('')
+const currentPassword = ref('')
+const newPassword = ref('')
+const newPasswordConfirmation = ref('')
 const errorMsg = ref('')
 const loading = ref(false)
 const submitted = ref(false)
 
+const api = useApi()
+const router = useRouter()
+
 onMounted(() => {
-  // rAF so the initial (unmounted) state paints first, guaranteeing the transition fires
   requestAnimationFrame(() => {
     mounted.value = true
   })
@@ -95,27 +100,35 @@ onMounted(() => {
 async function handleSubmit() {
   errorMsg.value = ''
 
-  if (!email.value || !message.value) {
-    errorMsg.value = 'Please fill in both your email and message.'
+  if (!currentPassword.value || !newPassword.value || !newPasswordConfirmation.value) {
+    errorMsg.value = 'Please fill in all fields.'
+    return
+  }
+
+  if (newPassword.value !== newPasswordConfirmation.value) {
+    errorMsg.value = 'New password and confirmation do not match.'
     return
   }
 
   loading.value = true
 
-  const config = useRuntimeConfig()
-
   try {
-    await $fetch(`${config.public.apiBase}/api/request-access`, {
+    await api('/change-password', {
       method: 'POST',
       body: {
-        email: email.value,
-        message: message.value
+        current_password: currentPassword.value,
+        new_password: newPassword.value,
+        new_password_confirmation: newPasswordConfirmation.value
       }
     })
 
     submitted.value = true
-  } catch (err) {
-    errorMsg.value = 'Something went wrong sending your request. Please try again.'
+
+    setTimeout(() => {
+      router.push('/client/dashboard')
+    }, 1500)
+  } catch (err: any) {
+    errorMsg.value = err?.data?.message || 'Something went wrong. Please try again.'
   } finally {
     loading.value = false
   }
@@ -123,10 +136,6 @@ async function handleSubmit() {
 </script>
 
 <style scoped>
-/*
-  styles that are not globally declared
-*/
-
 .card__form {
   width: 100%;
   margin-top: 1.5rem;
@@ -152,13 +161,7 @@ async function handleSubmit() {
   background: #fdfcfa;
   font-size: 0.95rem;
   color: #33302b;
-  font-family: inherit;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.field__input--textarea {
-  resize: vertical;
-  min-height: 5.5rem;
 }
 
 .field__input:focus {
@@ -195,22 +198,5 @@ async function handleSubmit() {
   color: #4a453d;
   text-align: center;
   margin: 0;
-}
-
-.card__footer {
-  margin-top: 1.5rem;
-  font-size: 0.85rem;
-  color: #857a6d;
-  text-align: center;
-}
-
-.card__footer-link {
-  color: #b8834a;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.card__footer-link:hover {
-  color: #9c6e3c;
 }
 </style>

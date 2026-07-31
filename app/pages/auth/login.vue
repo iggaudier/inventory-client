@@ -72,6 +72,7 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({ middleware: 'guest' })
 const mounted = ref(false)
 const email = ref('')
 const password = ref('')
@@ -106,15 +107,23 @@ async function handleSignIn() {
     })
 
     const token = useCookie('auth_token', {
-      maxAge: 60 * 60 * 24 * 7, // 7 days, adjust as needed
+      maxAge: 60 * 60 * 24 * 7,
       sameSite: 'lax'
     })
     token.value = response.token
 
+    // Populate the user session state directly from the login response
+    // (it already has the same shape as /me), instead of making a second
+    // network call. That extra round-trip could lose the race against the
+    // dashboard's auth middleware check, causing "sign in" to appear to
+    // require two clicks.
+    const { setUser } = useAuth()
+    setUser(response.user)
+
     if (response.must_change_password) {
       await router.push('/auth/change-password')
     } else {
-      await router.push('/dashboard')
+      await router.push('/client/dashboard')
     }
   } catch (err) {
     errorMsg.value = err?.data?.message || 'Invalid email or password.'
