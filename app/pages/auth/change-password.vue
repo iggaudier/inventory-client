@@ -90,6 +90,7 @@ const submitted = ref(false)
 
 const api = useApi()
 const router = useRouter()
+const { fetchUser } = useAuth()
 
 onMounted(() => {
   requestAnimationFrame(() => {
@@ -122,6 +123,7 @@ async function handleSubmit() {
       }
     })
 
+    await fetchUser()
     submitted.value = true
 
     setTimeout(() => {
