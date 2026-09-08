@@ -4,10 +4,8 @@
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'auth',
-  layout: 'client'
+    middleware: 'auth',
+    layout: 'client',
+    title: 'Dashboard'
 })
 </script>
-
-<style scoped>
-</style>

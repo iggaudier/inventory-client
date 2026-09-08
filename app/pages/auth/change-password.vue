@@ -1,63 +1,63 @@
 <template>
-  <section class="landing">
-    <div class="landing__field" aria-hidden="true" />
+  <section class="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-linen p-6">
+    <div class="pointer-events-none absolute -inset-[10%] bg-[radial-gradient(circle_at_20%_15%,rgba(184,131,74,0.06),transparent_40%),radial-gradient(circle_at_84%_80%,rgba(107,130,112,0.06),transparent_46%)]" aria-hidden="true" />
 
-    <div class="landing__stage">
-      <div class="card" :class="{ 'card--in': mounted }">
-        <span class="card__punch" aria-hidden="true" />
+    <div class="relative w-full max-w-[25rem]">
+      <div class="relative rounded-[14px] border border-[#e2ddd0] bg-card px-8 pt-9 pb-8 shadow-[0_24px_48px_-28px_rgba(36,34,29,0.18)] transition-[opacity,transform] duration-[560ms] ease-[cubic-bezier(0.22,1,0.36,1)]" :class="mounted ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-[18px] scale-[0.98] opacity-0'">
+        <span class="absolute top-[1.1rem] left-[1.1rem] size-2.5 rounded-full border border-[#d8d2c2] bg-linen" aria-hidden="true" />
 
-        <p class="card__eyebrow">Update your</p>
-        <h1 class="card__title">Password</h1>
+        <p class="mb-[0.6rem] font-mono text-[0.6875rem] uppercase tracking-[0.08em] text-[#8c8571]">Update your</p>
+        <h1 class="mb-[0.6rem] text-[2.5rem] leading-none font-medium text-ink">Password</h1>
 
-        <p class="card__subtitle">
+        <p class="mb-7 max-w-[30ch] text-[0.9375rem] leading-[1.55] text-copy">
           Choose a new password to secure your account.
         </p>
 
-        <form v-if="!submitted" class="card__form" @submit.prevent="handleSubmit">
+        <form v-if="!submitted" class="mt-6 flex w-full flex-col gap-4 text-left" @submit.prevent="handleSubmit">
           <div class="field">
-            <label for="current_password" class="field__label">Current password</label>
+            <label for="current_password" class="mb-[0.35rem] block text-[0.8rem] font-medium text-[#6b6156]">Current password</label>
             <input
               id="current_password"
               v-model="currentPassword"
               type="password"
               autocomplete="current-password"
               placeholder="••••••••"
-              class="field__input"
+              class="w-full rounded-[0.6rem] border border-rule bg-paper px-[0.85rem] py-[0.6rem] text-[0.95rem] text-[#33302b] transition-[border-color,box-shadow] duration-200 focus:border-ochre focus:ring-3 focus:ring-[rgba(184,131,74,0.15)] focus:outline-none"
             />
           </div>
 
           <div class="field">
-            <label for="new_password" class="field__label">New password</label>
+            <label for="new_password" class="mb-[0.35rem] block text-[0.8rem] font-medium text-[#6b6156]">New password</label>
             <input
               id="new_password"
               v-model="newPassword"
               type="password"
               autocomplete="new-password"
               placeholder="••••••••"
-              class="field__input"
+              class="w-full rounded-[0.6rem] border border-rule bg-paper px-[0.85rem] py-[0.6rem] text-[0.95rem] text-[#33302b] transition-[border-color,box-shadow] duration-200 focus:border-ochre focus:ring-3 focus:ring-[rgba(184,131,74,0.15)] focus:outline-none"
             />
           </div>
 
           <div class="field">
-            <label for="new_password_confirmation" class="field__label">Confirm new password</label>
+            <label for="new_password_confirmation" class="mb-[0.35rem] block text-[0.8rem] font-medium text-[#6b6156]">Confirm new password</label>
             <input
               id="new_password_confirmation"
               v-model="newPasswordConfirmation"
               type="password"
               autocomplete="new-password"
               placeholder="••••••••"
-              class="field__input"
+              class="w-full rounded-[0.6rem] border border-rule bg-paper px-[0.85rem] py-[0.6rem] text-[0.95rem] text-[#33302b] transition-[border-color,box-shadow] duration-200 focus:border-ochre focus:ring-3 focus:ring-[rgba(184,131,74,0.15)] focus:outline-none"
             />
           </div>
 
-          <p v-if="errorMsg" class="field__error">
+          <p v-if="errorMsg" class="-mt-1 text-[0.8rem] text-danger">
             {{ errorMsg }}
           </p>
 
-          <div class="card__actions">
+          <div class="mt-1">
             <button
               type="submit"
-              class="btn btn--primary"
+              class="w-full rounded-[9px] border border-ochre bg-ochre px-5 py-3 text-center text-[0.9375rem] font-medium text-card transition-[transform,background-color,border-color,box-shadow] duration-150 hover:border-ochre-dark hover:bg-ochre-dark hover:shadow-[0_8px_18px_-8px_rgba(184,131,74,0.45)] active:scale-[0.97]"
               :disabled="loading"
             >
               {{ loading ? 'Updating...' : 'Update Password' }}
@@ -65,8 +65,8 @@
           </div>
         </form>
 
-        <div v-else class="card__success">
-          <p class="card__success-text">
+        <div v-else class="mt-6 rounded-[0.6rem] border border-rule bg-[#f4f1ea] p-4">
+          <p class="m-0 text-center text-[0.9rem] text-[#4a453d]">
             Your password has been updated.
           </p>
         </div>
@@ -136,69 +136,3 @@ async function handleSubmit() {
   }
 }
 </script>
-
-<style scoped>
-.card__form {
-  width: 100%;
-  margin-top: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  text-align: left;
-}
-
-.field__label {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #6b6156;
-  margin-bottom: 0.35rem;
-}
-
-.field__input {
-  width: 100%;
-  padding: 0.6rem 0.85rem;
-  border: 1px solid #e2dcd2;
-  border-radius: 0.6rem;
-  background: #fdfcfa;
-  font-size: 0.95rem;
-  color: #33302b;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.field__input:focus {
-  outline: none;
-  border-color: #b8834a;
-  box-shadow: 0 0 0 3px rgba(184, 131, 74, 0.15);
-}
-
-.field__error {
-  font-size: 0.8rem;
-  color: #c0463b;
-  margin: -0.25rem 0 0;
-}
-
-.card__actions {
-  margin-top: 0.25rem;
-}
-
-.card__actions .btn {
-  width: 100%;
-  text-align: center;
-}
-
-.card__success {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  border-radius: 0.6rem;
-  background: #f4f1ea;
-  border: 1px solid #e2dcd2;
-}
-
-.card__success-text {
-  font-size: 0.9rem;
-  color: #4a453d;
-  text-align: center;
-  margin: 0;
-}
-</style>
