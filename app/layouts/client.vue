@@ -1,14 +1,14 @@
 <template>
   <div
-    class="client-layout"
+    class="min-h-screen"
     :style="{ '--sidebar-width': collapsed ? '72px' : '240px' }"
   >
     <AppSidebar />
 
-    <div class="client-content">
+    <div class="min-h-screen bg-[#f9f7f3] transition-[margin] duration-200 ease-in-out" :style="{ marginLeft: 'var(--sidebar-width)' }">
       <AppHeader :title="pageTitle" :eyebrow="pageEyebrow" />
 
-      <main class="client-main">
+      <main class="px-8 pt-[6.5rem] pb-8">
         <slot />
       </main>
     </div>
@@ -26,16 +26,3 @@ const route = useRoute()
 const pageTitle = computed(() => (route.meta.title as string) || 'Dashboard')
 const pageEyebrow = computed(() => route.meta.eyebrow as string | undefined)
 </script>
-
-<style scoped>
-.client-content {
-  min-height: 100vh;
-  margin-left: var(--sidebar-width);
-  background: #f9f7f3;
-  transition: margin-left 0.2s ease;
-}
-
-.client-main {
-  padding: 6.5rem 2rem 2rem;
-}
-</style>

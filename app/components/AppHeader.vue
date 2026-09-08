@@ -1,18 +1,18 @@
 <template>
-  <header class="app-header">
-    <div class="app-header__titles">
-      <p v-if="eyebrow" class="app-header__eyebrow">{{ eyebrow }}</p>
-      <h2 class="app-header__title">{{ title }}</h2>
+  <header class="fixed top-0 right-0 z-20 flex items-center justify-between border-b border-rule bg-paper px-8 py-5 transition-[left] duration-200 ease-in-out" :style="{ left: 'var(--sidebar-width)' }">
+    <div>
+      <p v-if="eyebrow" class="mb-[0.15rem] text-[0.7rem] uppercase tracking-[0.06em] text-muted">{{ eyebrow }}</p>
+      <h2 class="m-0 text-xl font-semibold text-[#33302b]">{{ title }}</h2>
     </div>
 
-    <div v-if="user" class="app-header__user">
-      <div class="app-header__greeting">
-        <p class="app-header__greeting-name">{{ user.name }}</p>
-        <p class="app-header__greeting-role">{{ user.role }}</p>
+    <div v-if="user" class="flex items-center gap-3">
+      <div class="text-right">
+        <p class="m-0 text-[0.85rem] font-semibold text-[#33302b]">{{ user.name }}</p>
+        <p class="mt-[0.1rem] mb-0 text-[0.75rem] capitalize text-muted">{{ user.role }}</p>
       </div>
 
       <span
-        class="app-header__avatar"
+        class="flex size-9 shrink-0 items-center justify-center rounded-full text-[0.8rem] font-semibold text-paper"
         :style="{ background: avatarColor }"
         aria-hidden="true"
       >
@@ -48,72 +48,3 @@ const avatarColor = computed(() => {
   return swatches[index]
 })
 </script>
-
-<style scoped>
-.app-header {
-  position: fixed;
-  top: 0;
-  left: var(--sidebar-width);
-  right: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.25rem 2rem;
-  background: #fdfcfa;
-  border-bottom: 1px solid #e2dcd2;
-  transition: left 0.2s ease;
-}
-
-.app-header__eyebrow {
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #857a6d;
-  margin: 0 0 0.15rem;
-}
-
-.app-header__title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #33302b;
-  margin: 0;
-}
-
-.app-header__user {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.app-header__greeting {
-  text-align: right;
-}
-
-.app-header__greeting-name {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #33302b;
-  margin: 0;
-}
-
-.app-header__greeting-role {
-  font-size: 0.75rem;
-  color: #857a6d;
-  margin: 0.1rem 0 0;
-  text-transform: capitalize;
-}
-
-.app-header__avatar {
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #fdfcfa;
-  flex-shrink: 0;
-}
-</style>
