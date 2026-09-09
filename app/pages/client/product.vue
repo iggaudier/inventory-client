@@ -1,12 +1,3 @@
-<!--
-  Product list page — assumes your app's existing layout already
-  provides the sidebar/shell, so this only renders the page content
-  (header, search + filter, table, pagination), re-themed to the Lily
-  palette. Adds a "View" action alongside Edit/Delete.
-
-  Assumes a `useApi()` composable (see earlier setup) hitting your Laravel
-  API. Swap the endpoint paths below if yours differ.
--->
 <template>
   <div class="bg-[#f1eee7] p-5 sm:p-8">
     <div class="mx-auto max-w-[1200px] rounded-2xl border border-[#e2ddd0] bg-[#fbfaf6] p-6 sm:p-8 shadow-[0_1px_2px_rgba(36,34,29,0.04)]">
@@ -16,7 +7,7 @@
             <h1 class="text-3xl font-medium text-[#24221d]">Products</h1>
             <p class="mt-1 text-sm text-[#8c8571]">Manage your material library — view, edit, or remove entries.</p>
           </div>
-
+ 
           <button
             type="button"
             class="inline-flex items-center gap-2 rounded-lg bg-[#b8834a] px-4 py-2.5 text-sm font-medium text-[#fbfaf6] transition-colors hover:bg-[#a6733d]"
@@ -28,8 +19,8 @@
             Add New Product
           </button>
         </div>
-
-        <!-- Search + filter -->
+ 
+        <!-- Search + filters -->
         <div class="flex flex-col sm:flex-row gap-3 mb-6">
           <div class="relative flex-1">
             <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#a49c88]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -43,7 +34,7 @@
               class="w-full rounded-lg border border-[#e2ddd0] bg-[#f1eee7]/40 py-2.5 pl-10 pr-4 text-sm text-[#24221d] placeholder:text-[#a49c88] focus:border-[#b8834a] focus:outline-none focus:ring-2 focus:ring-[#b8834a]/15"
             />
           </div>
-
+ 
           <select
             v-model="categoryFilter"
             class="rounded-lg border border-[#e2ddd0] bg-[#f1eee7]/40 px-3.5 py-2.5 text-sm text-[#24221d] focus:border-[#b8834a] focus:outline-none focus:ring-2 focus:ring-[#b8834a]/15"
@@ -51,8 +42,25 @@
             <option value="">All Categories</option>
             <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
           </select>
+ 
+          <select
+            v-model="subcategoryFilter"
+            :disabled="!categoryFilter"
+            class="rounded-lg border border-[#e2ddd0] bg-[#f1eee7]/40 px-3.5 py-2.5 text-sm text-[#24221d] focus:border-[#b8834a] focus:outline-none focus:ring-2 focus:ring-[#b8834a]/15 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <option value="">All Subcategories</option>
+            <option v-for="s in subcategories" :key="s.id" :value="s.id">{{ s.name }}</option>
+          </select>
+ 
+          <select
+            v-model="brandFilter"
+            class="rounded-lg border border-[#e2ddd0] bg-[#f1eee7]/40 px-3.5 py-2.5 text-sm text-[#24221d] focus:border-[#b8834a] focus:outline-none focus:ring-2 focus:ring-[#b8834a]/15"
+          >
+            <option value="">All Brands</option>
+            <option v-for="b in brands" :key="b.id" :value="b.id">{{ b.name }}</option>
+          </select>
         </div>
-
+ 
         <!-- Table -->
         <div class="overflow-x-auto rounded-xl border border-[#e2ddd0]">
           <table class="w-full text-sm">
@@ -80,7 +88,7 @@
                   </td>
                 </tr>
               </template>
-
+ 
               <template v-if="!pending">
                 <tr
                   v-for="(product, i) in products"
@@ -88,7 +96,7 @@
                   class="border-b border-[#ece7da] last:border-0 hover:bg-[#f1eee7]/40"
                 >
                 <td class="px-4 py-4 text-[#a49c88]">{{ startIndex + i + 1 }}</td>
-
+ 
                 <td class="px-4 py-4">
                   <div class="flex items-center gap-3">
                     <div class="h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-[#e2ddd0] bg-[#f1eee7]">
@@ -112,12 +120,12 @@
                     </div>
                   </div>
                 </td>
-
+ 
                 <td class="px-4 py-4 text-[#4d493e]">
                   <p>{{ product.category?.name ?? '—' }}</p>
                   <p v-if="product.subcategory" class="text-xs text-[#a49c88]">{{ product.subcategory.name }}</p>
                 </td>
-
+ 
                 <td class="px-4 py-4 text-[#4d493e]">
                   <div class="flex items-center gap-2">
                     <span
@@ -128,15 +136,15 @@
                     <span>{{ [product.material, product.color].filter(Boolean).join(' · ') || '—' }}</span>
                   </div>
                 </td>
-
+ 
                 <td class="px-4 py-4 font-medium text-[#24221d]">
                   {{ formatCurrency(product.price, product.currency) }}
                 </td>
-
+ 
                 <td class="px-4 py-4 text-[#4d493e]">
                   {{ product.lead_time_days ? `${product.lead_time_days}d` : '—' }}
                 </td>
-
+ 
                 <td class="px-4 py-4">
                   <span
                     class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium"
@@ -147,7 +155,7 @@
                     {{ product.in_stock ? 'In Stock' : 'Out of Stock' }}
                   </span>
                 </td>
-
+ 
                 <td class="px-4 py-4">
                   <div class="flex items-center justify-end gap-2">
                     <button
@@ -161,7 +169,7 @@
                       </svg>
                       View
                     </button>
-
+ 
                     <button
                       type="button"
                       class="inline-flex items-center gap-1.5 rounded-lg border border-[#e2ddd0] px-3 py-1.5 text-xs font-medium text-[#24221d] hover:bg-[#f1eee7]"
@@ -173,7 +181,7 @@
                       </svg>
                       Edit
                     </button>
-
+ 
                     <button
                       type="button"
                       class="inline-flex items-center gap-1.5 rounded-lg border border-[#f0d3cc] bg-[#fdf4f2] px-3 py-1.5 text-xs font-medium text-[#a8493a] hover:bg-[#f7e6e3]"
@@ -189,7 +197,7 @@
                 </td>
               </tr>
               </template>
-
+ 
               <tr v-if="!pending && products.length === 0">
                 <td colspan="8" class="px-4 py-10 text-center text-sm text-[#a49c88]">
                   No products match your search.
@@ -198,13 +206,13 @@
             </tbody>
           </table>
         </div>
-
+ 
         <!-- Pagination -->
         <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
           <p class="text-sm text-[#8c8571]">
             Showing {{ startIndex + 1 }} to {{ Math.min(startIndex + perPage, total) }} of {{ total }} products
           </p>
-
+ 
           <div class="flex items-center gap-1.5">
             <button
               type="button"
@@ -216,7 +224,7 @@
                 <path d="m15 18-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </button>
-
+ 
             <button
               v-for="p in pageNumbers"
               :key="p"
@@ -229,7 +237,7 @@
             >
               {{ p }}
             </button>
-
+ 
             <button
               type="button"
               class="flex h-8 w-8 items-center justify-center rounded-lg border border-[#e2ddd0] text-[#24221d] disabled:opacity-40"
@@ -243,7 +251,7 @@
           </div>
         </div>
     </div>
-
+ 
     <ProductViewModal v-model="showViewModal" :product-id="selectedProductId" />
     <ProductFormModal
       v-model="showFormModal"
@@ -253,47 +261,49 @@
     />
   </div>
 </template>
-
+ 
 <script setup lang="ts">
 definePageMeta({
   title: 'Products',
   middleware: 'auth',
   layout: 'client',
 })
-
+ 
 const api = useApi()
-
+ 
 const showViewModal = ref(false)
 const showFormModal = ref(false)
 const formMode = ref<'create' | 'edit'>('create')
 const selectedProductId = ref<number | string | null>(null)
-
+ 
 function openView(product: { id: number | string }) {
   selectedProductId.value = product.id
   showViewModal.value = true
 }
-
+ 
 function openCreate() {
   selectedProductId.value = null
   formMode.value = 'create'
   showFormModal.value = true
 }
-
+ 
 function openEdit(product: { id: number | string }) {
   selectedProductId.value = product.id
   formMode.value = 'edit'
   showFormModal.value = true
 }
-
+ 
 async function onSaved() {
   await refresh()
 }
-
+ 
 const search = ref('')
 const categoryFilter = ref('')
+const subcategoryFilter = ref('')
+const brandFilter = ref('')
 const page = ref(1)
 const perPage = 8
-
+ 
 // Debounce search so we're not firing a request per keystroke
 const debouncedSearch = ref('')
 let searchTimeout: ReturnType<typeof setTimeout>
@@ -304,44 +314,73 @@ watch(search, (val) => {
     page.value = 1
   }, 300)
 })
-watch(categoryFilter, () => { page.value = 1 })
-
+ 
+// Changing category clears whatever subcategory was selected under the
+// previous category, and resets to page 1 like every other filter.
+watch(categoryFilter, () => {
+  subcategoryFilter.value = ''
+  page.value = 1
+})
+watch(subcategoryFilter, () => { page.value = 1 })
+watch(brandFilter, () => { page.value = 1 })
+ 
 const { data, pending, refresh } = await useAsyncData(
   'products-list',
   () => api('/products', {
     query: {
       search: debouncedSearch.value || undefined,
       category_id: categoryFilter.value || undefined,
+      subcategory_id: subcategoryFilter.value || undefined,
+      brand_id: brandFilter.value || undefined,
       page: page.value,
       per_page: perPage,
     },
   }),
-  { watch: [debouncedSearch, categoryFilter, page] }
+  { watch: [debouncedSearch, categoryFilter, subcategoryFilter, brandFilter, page] }
 )
-
+ 
 const products = computed(() => data.value?.data ?? [])
 const total = computed(() => data.value?.meta?.total ?? 0)
 const lastPage = computed(() => data.value?.meta?.last_page ?? 1)
 const startIndex = computed(() => (page.value - 1) * perPage)
-
+ 
 const pageNumbers = computed(() => {
   const pages: number[] = []
   const max = Math.min(lastPage.value, 5)
   for (let i = 1; i <= max; i++) pages.push(i)
   return pages
 })
-
+ 
+// ---- Filter dropdowns ----
 const { data: categoriesData } = await useAsyncData(
   'categories-list',
   () => api('/categories', { query: { per_page: 100 } })
 )
 const categories = computed(() => categoriesData.value?.data ?? [])
-
+ 
+// Subcategories are scoped to whichever category is selected — mirrors
+// SubcategoryController@index, which already accepts ?category_id=.
+// Empty/disabled until a category is chosen.
+const { data: subcategoriesData } = await useAsyncData(
+  'subcategories-filter',
+  () => api('/subcategories', { query: { category_id: categoryFilter.value, per_page: 200 } }),
+  { watch: [categoryFilter] }
+)
+const subcategories = computed(() =>
+  categoryFilter.value ? (subcategoriesData.value?.data ?? []) : []
+)
+ 
+const { data: brandsData } = await useAsyncData(
+  'brands-filter',
+  () => api('/brands', { query: { per_page: 200 } })
+)
+const brands = computed(() => brandsData.value?.data ?? [])
+ 
 function formatCurrency(value: number | string, currency = 'USD') {
   const amount = typeof value === 'string' ? parseFloat(value) : value
   return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount ?? 0)
 }
-
+ 
 async function confirmDelete(product: any) {
   if (!confirm(`Delete "${product.name}"? This can't be undone.`)) return
   await api(`/products/${product.id}`, { method: 'DELETE' })
