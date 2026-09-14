@@ -130,7 +130,12 @@ async function handleSubmit() {
       router.push('/client/dashboard')
     }, 1500)
   } catch (err: any) {
+  const errors = err?.data?.errors
+  if (errors) {
+    errorMsg.value = Object.values(errors).flat()[0]
+  } else {
     errorMsg.value = err?.data?.message || 'Something went wrong. Please try again.'
+  }
   } finally {
     loading.value = false
   }

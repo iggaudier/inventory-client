@@ -2,7 +2,7 @@ export const useApi = () => {
   const config = useRuntimeConfig()
 
   const api = $fetch.create({
-    baseURL: `${config.public.apiBase}/api`,
+    baseURL: `${config.public.apiBase}`,
     credentials: 'include',
     onRequest({ options }) {
       const token = useCookie('auth_token')

@@ -101,7 +101,7 @@ async function handleSignIn() {
   const config = useRuntimeConfig()
 
   try {
-    const response = await $fetch(`${config.public.apiBase}/api/login`, {
+    const response = await $fetch(`${config.public.apiBase}/login`, {
       method: 'POST',
       body: { email: email.value, password: password.value }
     })

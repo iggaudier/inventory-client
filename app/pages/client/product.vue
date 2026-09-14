@@ -4,7 +4,7 @@
         <!-- Header -->
         <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
           <div>
-            <h1 class="text-3xl font-medium text-[#24221d]">Products</h1>
+            <!-- <h1 class="text-3xl font-medium text-[#24221d]">Products</h1> -->
             <p class="mt-1 text-sm text-[#8c8571]">Manage your material library — view, edit, or remove entries.</p>
           </div>
  
