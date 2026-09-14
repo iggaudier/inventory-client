@@ -45,7 +45,7 @@
                 </div>
                 <!-- For Super Admin -->
                  <FormField
-                    v-if="isSuperAdmin"
+                    v-if="isSuperAdmin && mode === 'create'"
                     label="Organization"
                     :error="errors.organization_id"
                   >
