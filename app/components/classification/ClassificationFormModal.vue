@@ -109,7 +109,7 @@ function validate() {
   if (form.type === 'subcategory' && props.mode === 'create' && !form.category_id) errors.category_id = 'Choose a parent category.'
   if (isSuperAdmin.value && props.mode === 'create' && !form.organization_id) errors.organization_id = 'Choose an organization.'
   if (Object.keys(errors).length) {
-    formError.value = 'Please fix the errors below.'
+    formError.value = 'Please fill the required fields below.'
     return false
   }
   return true

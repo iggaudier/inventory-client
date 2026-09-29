@@ -1,7 +1,13 @@
 <template>
   <div class="bg-[#f1eee7] p-5 sm:p-8">
     <div class="mx-auto max-w-[1200px] rounded-2xl border border-[#e2ddd0] bg-[#fbfaf6] p-6 shadow-[0_1px_2px_rgba(36,34,29,0.04)] sm:p-8">
-      <div class="mb-6"><p class="mt-1 text-sm text-[#8c8571]">View users across every organization.</p></div>
+      <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <p class="mt-1 text-sm text-[#8c8571]">View users across every organization.</p>
+        <button type="button" class="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[#b8834a] px-4 py-2.5 text-sm font-medium text-[#fbfaf6] transition-colors hover:bg-[#a6733d]" @click="showUserModal = true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round" /></svg>
+          Add New User
+        </button>
+      </div>
       <div class="mb-6 flex flex-col gap-3 sm:flex-row">
         <div class="relative max-w-xl flex-1">
           <svg class="absolute top-1/2 left-3.5 -translate-y-1/2 text-[#a49c88]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" stroke-linecap="round" /></svg>
@@ -19,16 +25,21 @@
         </table>
       </div>
     </div>
+    <UsersUserFormModal v-model="showUserModal" @saved="refresh" />
   </div>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ title: 'All Users', middleware: 'auth', layout: 'client' })
+definePageMeta({ 
+  title: 'All Users', 
+  middleware: ['auth', 'admin'], 
+  layout: 'client' })
 
 const api = useApi()
 const search = ref('')
 const debouncedSearch = ref('')
 const organizationFilter = ref<number | string | ''>('')
+  const showUserModal = ref(false)
 let searchTimeout: ReturnType<typeof setTimeout>
 watch(search, (value) => { clearTimeout(searchTimeout); searchTimeout = setTimeout(() => { debouncedSearch.value = value }, 300) })
 

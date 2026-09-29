@@ -31,14 +31,15 @@
         </table>
       </div>
     </div>
-    <GroupMemberFormModal v-model="showMemberModal" @saved="refresh" />
+    <MemberGroupMemberFormModal v-model="showMemberModal" @saved="refresh" />
   </div>
 </template>
 
 <script setup lang="ts">
-import GroupMemberFormModal from '~/components/member/GroupMemberFormModal.vue'
-
-definePageMeta({ title: 'Group Members', middleware: 'auth', layout: 'client' })
+definePageMeta({ 
+  title: 'Group Members', 
+  middleware: 'auth', 
+  layout: 'client' })
 
 const api = useApi()
 const search = ref('')
