@@ -1,16 +1,26 @@
+<!--
+  components/users/UserFormModal.vue
+
+  "Add New User" for the super-admin All Users page — unlike the
+  Group Admin's own scoped "Add Group Member" modal (which fixes the
+  organization and role implicitly), this one lets the super admin
+  pick BOTH the organization and the role, and posts to POST /users
+  (UserController@storeUser).
+-->
+
 <template>
   <Teleport to="body">
     <Transition name="modal-fade">
       <div v-if="modelValue" class="fixed inset-0 z-50 flex items-start justify-center bg-[#24221d]/40 px-4 py-8 sm:py-12" @mousedown.self="close">
         <Transition name="modal-pop" appear>
-          <div v-if="modelValue" role="dialog" aria-modal="true" aria-label="Add group member" class="relative w-full max-w-lg rounded-2xl border border-[#e2ddd0] bg-[#fbfaf6] shadow-[0_24px_60px_-20px_rgba(36,34,29,0.35)]">
+          <div v-if="modelValue" role="dialog" aria-modal="true" aria-label="Add new user" class="relative w-full max-w-lg rounded-2xl border border-[#e2ddd0] bg-[#fbfaf6] shadow-[0_24px_60px_-20px_rgba(36,34,29,0.35)]">
             <button type="button" class="absolute top-6 right-6 flex size-8 items-center justify-center rounded-full text-[#a49c88] hover:bg-[#f1eee7] hover:text-[#24221d]" aria-label="Close" @click="close">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" stroke-linecap="round" /></svg>
             </button>
 
             <form class="p-6 sm:p-8" @submit.prevent="submit">
-              <p class="font-mono text-xs uppercase tracking-wide text-[#a49c88]">New teammate</p>
-              <h2 class="mt-1 pr-8 text-2xl font-medium text-[#24221d]">Add Group Member</h2>
+              <p class="font-mono text-xs uppercase tracking-wide text-[#a49c88]">New account</p>
+              <h2 class="mt-1 pr-8 text-2xl font-medium text-[#24221d]">Add New User</h2>
               <p class="mt-2 text-sm text-[#8c8571]">They will receive a temporary password by email.</p>
 
               <div v-if="formError" class="mt-6 rounded-lg border border-[#f0d3cc] bg-[#fdf4f2] px-4 py-3 text-sm text-[#a8493a]">{{ formError }}</div>
@@ -21,16 +31,36 @@
                   <input v-model.trim="form.name" type="text" autocomplete="name" maxlength="255" placeholder="e.g. Jamie Cruz" class="input" />
                   <p v-if="errors.name" class="error">{{ errors.name }}</p>
                 </label>
+
                 <label class="block">
                   <span class="mb-1.5 block text-sm font-medium text-[#4d493e]">Email address</span>
                   <input v-model.trim="form.email" type="email" autocomplete="email" maxlength="255" placeholder="jamie@example.com" class="input" />
                   <p v-if="errors.email" class="error">{{ errors.email }}</p>
                 </label>
+
+                <label class="block">
+                  <span class="mb-1.5 block text-sm font-medium text-[#4d493e]">Organization</span>
+                  <select v-model="form.organization_id" class="input" :disabled="loadingOrganizations">
+                    <option :value="null">{{ loadingOrganizations ? 'Loading…' : 'Select organization…' }}</option>
+                    <option v-for="org in organizations" :key="org.id" :value="org.id">{{ org.name }}</option>
+                  </select>
+                  <p v-if="errors.organization_id" class="error">{{ errors.organization_id }}</p>
+                </label>
+
+                <label class="block">
+                  <span class="mb-1.5 block text-sm font-medium text-[#4d493e]">Role</span>
+                  <select v-model="form.role" class="input">
+                    <option :value="null">Select role…</option>
+                    <option value="group-admin">Group Admin</option>
+                    <option value="group-member">Group Member</option>
+                  </select>
+                  <p v-if="errors.role" class="error">{{ errors.role }}</p>
+                </label>
               </div>
 
               <div class="mt-7 flex justify-end gap-2 border-t border-[#e2ddd0] pt-5">
                 <button type="button" class="rounded-lg border border-[#e2ddd0] px-4 py-2 text-sm font-medium text-[#24221d] hover:bg-[#f1eee7]" @click="close">Cancel</button>
-                <button type="submit" class="rounded-lg bg-[#b8834a] px-4 py-2 text-sm font-medium text-[#fbfaf6] hover:bg-[#a6733d] disabled:opacity-60" :disabled="submitting">{{ submitting ? 'Sending…' : 'Add Member' }}</button>
+                <button type="submit" class="rounded-lg bg-[#b8834a] px-4 py-2 text-sm font-medium text-[#fbfaf6] hover:bg-[#a6733d] disabled:opacity-60" :disabled="submitting">{{ submitting ? 'Sending…' : 'Add User' }}</button>
               </div>
             </form>
           </div>
@@ -44,11 +74,35 @@
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits<{ 'update:modelValue': [value: boolean]; saved: [] }>()
 const api = useApi()
-const form = reactive({ name: '', email: '' })
+
+const emptyForm = () => ({
+  name: '',
+  email: '',
+  organization_id: null as number | null,
+  role: null as string | null,
+})
+
+const form = reactive(emptyForm())
 const errors = reactive<Record<string, string>>({})
 const formError = ref('')
 const submitting = ref(false)
 const isDirty = ref(false)
+
+// ---- Organizations for the picker ----
+const organizations = ref<any[]>([])
+const loadingOrganizations = ref(false)
+
+async function fetchOrganizations() {
+  loadingOrganizations.value = true
+  try {
+    const res: any = await api('/organizations')
+    organizations.value = res.data ?? res
+  } catch (e) {
+    formError.value = 'Could not load organizations. Please try again.'
+  } finally {
+    loadingOrganizations.value = false
+  }
+}
 
 function clearErrors() {
   Object.keys(errors).forEach((key) => delete errors[key])
@@ -56,8 +110,7 @@ function clearErrors() {
 }
 
 function resetForm() {
-  form.name = ''
-  form.email = ''
+  Object.assign(form, emptyForm())
   clearErrors()
   isDirty.value = false
 }
@@ -67,6 +120,8 @@ function validate() {
   if (!form.name) errors.name = 'A full name is required.'
   if (!form.email) errors.email = 'An email address is required.'
   else if (!/^\S+@\S+\.\S+$/.test(form.email)) errors.email = 'Enter a valid email address.'
+  if (!form.organization_id) errors.organization_id = 'Select an organization.'
+  if (!form.role) errors.role = 'Select a role.'
   if (Object.keys(errors).length) {
     formError.value = 'Please fill the required fields below.'
     return false
@@ -75,13 +130,24 @@ function validate() {
 }
 
 watch(form, () => { isDirty.value = true }, { deep: true })
-watch(() => props.modelValue, (open) => { if (open) resetForm() })
+watch(
+  () => props.modelValue,
+  (open) => {
+    if (!open) return
+    resetForm()
+    // Fetch fresh each time it opens rather than once on mount, so a
+    // newly-created org (via the Organizations page) shows up without
+    // needing a full page reload.
+    fetchOrganizations()
+  },
+  { immediate: true }
+)
 
 async function submit() {
   if (!validate()) return
   submitting.value = true
   try {
-    await api('/group-members', { method: 'POST', body: form })
+    await api('/users', { method: 'POST', body: form })
     isDirty.value = false
     emit('saved')
     emit('update:modelValue', false)
@@ -90,7 +156,7 @@ async function submit() {
     Object.entries(payload.errors ?? {}).forEach(([key, messages]) => {
       errors[key] = Array.isArray(messages) ? messages[0] : String(messages)
     })
-    formError.value = payload.message ?? 'Unable to add the group member. Please try again.'
+    formError.value = payload.message ?? 'Unable to add the user. Please try again.'
   } finally {
     submitting.value = false
   }
@@ -104,6 +170,7 @@ function close() {
 <style scoped>
 .input { width: 100%; border: 1px solid #e2ddd0; border-radius: 0.5rem; background: rgba(241, 238, 231, 0.4); padding: 0.625rem 0.75rem; font-size: 0.875rem; color: #24221d; }
 .input:focus { outline: none; border-color: #b8834a; box-shadow: 0 0 0 3px rgba(184, 131, 74, 0.15); }
+.input:disabled { opacity: 0.55; cursor: not-allowed; }
 .error { margin-top: 0.375rem; font-size: 0.75rem; color: #a8493a; }
 .modal-fade-enter-active, .modal-fade-leave-active { transition: opacity 200ms ease; }
 .modal-fade-enter-from, .modal-fade-leave-to { opacity: 0; }

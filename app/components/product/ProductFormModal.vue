@@ -400,7 +400,7 @@ async function submit() {
       Object.entries(fieldErrors).forEach(([key, msgs]) => {
         errors[key] = Array.isArray(msgs) ? msgs[0] : String(msgs)
       })
-      formError.value = e.response._data?.message ?? 'Please fix the errors below.'
+      formError.value = e.response._data?.message ?? 'Please fill the required fields below.'
     } else {
       formError.value = 'Something went wrong while saving. Please try again.'
     }
