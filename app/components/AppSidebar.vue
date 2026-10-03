@@ -101,7 +101,7 @@ const navItems = [
   // { label: 'Subcategories', to: '/client/subcategories', icon: 'folder-tree', parent: 'products', roles: null },
   { label: 'Group Members', to: '/client/group-members', icon: 'users', parent: null, roles: ['group-admin'] },
   // { label: 'Group Admins', to: '/client/group-admins', icon: 'shield', parent: null, roles: ['super-admin'] },
-  { label: 'Organizations', to: '/client/organizations', icon: 'building', parent: null, roles: ['super-admin'] },
+  { label: 'Organizations', to: '/admin/organizations', icon: 'building', parent: null, roles: ['super-admin'] },
   { label: 'Users', to: '/admin/users', icon: 'user-round', parent: null, roles: ['super-admin'] } 
 ]
 
