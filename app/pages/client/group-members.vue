@@ -1,3 +1,4 @@
+<!-- group-members.vue -->
 <template>
   <div class="bg-[#f1eee7] p-5 sm:p-8">
     <div class="mx-auto max-w-[1200px] rounded-2xl border border-[#e2ddd0] bg-[#fbfaf6] p-6 shadow-[0_1px_2px_rgba(36,34,29,0.04)] sm:p-8">
@@ -23,14 +24,49 @@
               <td class="px-4 py-4 font-medium text-[#24221d]">{{ member.name }}</td>
               <td class="px-4 py-4 capitalize text-[#4d493e]">{{ member.roles?.[0]?.name?.replace('-', ' ') ?? '—' }}</td>
               <td class="px-4 py-4 text-[#4d493e]">{{ member.email }}</td>
-              <td class="px-4 py-4"><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium" :class="member.is_active ? 'bg-[#e7efe8] text-[#4a6b52]' : 'bg-[#f7e6e3] text-[#a8493a]'">{{ member.is_active ? 'Active' : 'Inactive' }}</span></td>
-              <td class="px-4 py-4 text-right"><button v-if="isGroupMember(member)" type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-[#f0d3cc] bg-[#fdf4f2] px-3 py-1.5 text-xs font-medium text-[#a8493a] hover:bg-[#f7e6e3]" @click="confirmDelete(member)">Delete</button><span v-else class="text-xs text-[#a49c88]">Protected</span></td>
+              <td class="px-4 py-4">
+                <div v-if="isGroupMember(member)" class="flex items-center gap-2">
+                  <button
+                    type="button"
+                    role="switch"
+                    :aria-checked="member.is_active"
+                    :title="member.is_active ? 'Click to deactivate' : 'Click to activate'"
+                    class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors disabled:cursor-wait disabled:opacity-50"
+                    :class="member.is_active ? 'bg-[#4a6b52]' : 'bg-[#d8c9b3]'"
+                    :disabled="togglingId === member.id"
+                    @click="toggleStatus(member)"
+                  >
+                    <span
+                      class="inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform"
+                      :class="member.is_active ? 'translate-x-[18px]' : 'translate-x-1'"
+                    />
+                  </button>
+                  <span class="text-xs font-medium" :class="member.is_active ? 'text-[#4a6b52]' : 'text-[#a8493a]'">
+                    {{ member.is_active ? 'Active' : 'Inactive' }}
+                  </span>
+                </div>
+                <span v-else class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium" :class="member.is_active ? 'bg-[#e7efe8] text-[#4a6b52]' : 'bg-[#f7e6e3] text-[#a8493a]'">
+                  {{ member.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td class="px-4 py-4 text-right">
+                <button
+                  v-if="isGroupMember(member)"
+                  type="button"
+                  class="rounded-lg border border-[#f0d3cc] bg-[#fdf4f2] px-3 py-1.5 text-xs font-medium text-[#a8493a] hover:bg-[#f7e6e3]"
+                  @click="confirmDelete(member)"
+                >
+                  Delete
+                </button>
+                <span v-else class="text-xs text-[#a49c88]">Protected</span>
+              </td>
             </tr>
             <tr v-if="!pending && members.length === 0"><td colspan="5" class="px-4 py-10 text-center text-sm text-[#a49c88]">No organization accounts found.</td></tr>
           </tbody>
         </table>
       </div>
     </div>
+
     <MemberGroupMemberFormModal v-model="showMemberModal" @saved="refresh" />
   </div>
 </template>
@@ -45,6 +81,7 @@ const api = useApi()
 const search = ref('')
 const debouncedSearch = ref('')
 const showMemberModal = ref(false)
+const togglingId = ref<number | string | null>(null)
 let searchTimeout: ReturnType<typeof setTimeout>
 
 watch(search, (value) => {
@@ -61,6 +98,24 @@ const members = computed(() => data.value?.data ?? data.value ?? [])
 
 function isGroupMember(member: any) {
   return member.roles?.some((role: any) => role.name === 'group-member')
+}
+
+async function toggleStatus(member: any) {
+  if (togglingId.value) return // avoid overlapping requests from a double-click
+
+  const previous = member.is_active
+  togglingId.value = member.id
+  member.is_active = !previous // optimistic — flips instantly, no modal, no reload
+
+  try {
+    await api(`/users/${member.id}`, { method: 'PUT', body: { is_active: member.is_active } })
+  } catch (error: any) {
+    member.is_active = previous // revert on failure
+    const payload = error?.data ?? error?.response?._data ?? {}
+    alert(payload.message ?? 'Could not update status. Please try again.')
+  } finally {
+    togglingId.value = null
+  }
 }
 
 async function confirmDelete(member: any) {
