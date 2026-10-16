@@ -105,7 +105,7 @@ async function handleSubmit() {
   const config = useRuntimeConfig()
 
   try {
-    await $fetch(`${config.public.apiBase}/api/request-access`, {
+    await $fetch(`${config.public.apiBase}/request-access`, {
       method: 'POST',
       body: {
         email: email.value,
