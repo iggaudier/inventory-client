@@ -7,7 +7,7 @@ export const useAuth = () => {
   }
 
   const fetchUser = async () => {
-    const token = useCookie('auth_token')
+    const token = useAuthToken()
     if (!token.value) {
       user.value = null
       return
@@ -21,7 +21,7 @@ export const useAuth = () => {
   }
 
   const logout = async () => {
-    const token = useCookie('auth_token')
+    const token = useAuthToken()
     try {
       await api('/logout', { method: 'POST' })
     } catch {

@@ -1,6 +1,6 @@
 export default defineNuxtRouteMiddleware(async () => {
   const { user, isLoggedIn, fetchUser } = useAuth()
-  const token = useCookie('auth_token')
+  const token = useAuthToken()
 
   // If we have a token but haven't resolved the user yet (e.g. the auth
   // plugin hasn't finished, or this is a fresh SSR request), try once
