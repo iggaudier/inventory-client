@@ -14,7 +14,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE,
+      // Set by Vercel for each environment. Do not include a trailing slash.
+      apiBase: '',
     },
   },
 })

@@ -98,18 +98,15 @@ async function handleSignIn() {
 
   loading.value = true
 
-  const config = useRuntimeConfig()
+  const api = useApi()
 
   try {
-    const response = await $fetch(`${config.public.apiBase}/login`, {
+    const response = await api('/login', {
       method: 'POST',
       body: { email: email.value, password: password.value }
     })
 
-    const token = useCookie('auth_token', {
-      maxAge: 60 * 60 * 24 * 7,
-      sameSite: 'lax'
-    })
+    const token = useAuthToken()
     token.value = response.token
 
     // Populate the user session state directly from the login response

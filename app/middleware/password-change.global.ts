@@ -1,5 +1,5 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-  const token = useCookie('auth_token')
+  const token = useAuthToken()
   const { user, fetchUser } = useAuth()
 
   if (token.value && !user.value) {
