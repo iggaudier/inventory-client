@@ -120,7 +120,7 @@ async function handleSignIn() {
     if (response.must_change_password) {
       await router.push('/auth/change-password')
     } else {
-      await router.push('/client/dashboard')
+      await router.push('/client/announcements')
     }
   } catch (err) {
     errorMsg.value = err?.data?.message || 'Invalid email or password.'
