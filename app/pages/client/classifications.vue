@@ -67,7 +67,9 @@
 definePageMeta({ 
     title: 'Classifications', 
     middleware: 'auth', 
-    layout: 'client' })
+    layout: 'client',
+    eyebrow: 'Categories, Subcategories, and Brands'
+  })
 
 type ClassificationType = 'category' | 'subcategory' | 'brand'
 type Classification = { id: number | string; name: string; type: ClassificationType; typeLabel: string; parentName?: string; category_id?: number | string | null }

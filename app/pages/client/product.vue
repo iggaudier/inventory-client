@@ -267,6 +267,7 @@ definePageMeta({
   title: 'Products',
   middleware: 'auth',
   layout: 'client',
+  eyebrow: 'Material Library',  
 })
  
 const api = useApi()

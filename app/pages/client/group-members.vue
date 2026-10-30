@@ -75,7 +75,9 @@
 definePageMeta({ 
   title: 'Group Members', 
   middleware: 'auth', 
-  layout: 'client' })
+  layout: 'client' ,
+  eyebrow: 'Organization Users'
+})
 
 const api = useApi()
 const search = ref('')
