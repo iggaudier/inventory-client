@@ -66,7 +66,9 @@
 definePageMeta({ 
   title: 'All Users', 
   middleware: ['auth', 'admin'], 
-  layout: 'client' })
+  layout: 'client',
+  eyebrow: 'User Management',
+})
 
 const api = useApi()
 const search = ref('')

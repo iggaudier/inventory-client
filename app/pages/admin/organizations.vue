@@ -140,6 +140,7 @@ definePageMeta({
   title: 'Organizations',
   middleware: ['auth', 'admin'],
   layout: 'client',
+  eyebrow: 'Organization Management',
 })
 
 const api = useApi()

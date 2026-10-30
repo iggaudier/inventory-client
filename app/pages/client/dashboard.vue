@@ -32,7 +32,12 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ middleware: 'auth', layout: 'client', title: 'Dashboard' })
+definePageMeta({
+  middleware: 'auth', 
+  eyebrow: 'Metrics', 
+  layout: 'client', 
+  title: 'Dashboard' 
+})
 
 type DashboardProduct = { id: number; name: string; sku: string; in_stock: boolean; created_at: string; category?: { name: string } | null; brand?: { name: string } | null }
 type CategoryMix = { name: string; count: number }

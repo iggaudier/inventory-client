@@ -95,6 +95,7 @@ async function handleLogout() {
 }
 
 const navItems = [
+  { label: 'Announcements', to: '/client/announcements', icon: 'megaphone', parent: null, roles: null },
   { label: 'Dashboard', to: '/client/dashboard', icon: 'dashboard', parent: null, roles: null },
   { label: 'Products', to: '/client/product', icon: 'package', parent: null, roles: null },
   { label: 'Classifications', to: '/client/classifications', icon: 'tags', parent: 'products', roles: null },
@@ -107,6 +108,7 @@ const navItems = [
 
 const navIconPaths: Record<string, string[]> = {
   dashboard: ['M3 3h7v7H3z', 'M14 3h7v7h-7z', 'M3 14h7v7H3z', 'M14 14h7v7h-7z'],
+  megaphone: ['M3 11v2a2 2 0 0 0 2 2h2l3 4h2l-1-4h2l6 3V6l-6 3H5a2 2 0 0 0-2 2Z', 'M17 9.5a3.5 3.5 0 0 1 0 5'],
   package: ['m7.5 4.27 9 5.15', 'M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z', 'M3.3 7 12 12l8.7-5', 'M12 22V12'],
   tags: ['M12.59 2.59A2 2 0 0 0 11.17 2H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.42l8.7 8.7a2 2 0 0 0 2.82 0l7.18-7.18a2 2 0 0 0 0-2.82Z', 'M7 7h.01'],
   'folder-tree': ['M3 3h6l2 3h10v15H3z', 'M8 12h8', 'M12 12v5', 'M9 17h6'],
