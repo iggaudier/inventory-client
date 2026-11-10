@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <Transition name="modal-fade">
-      <div v-if="modelValue" class="fixed inset-0 z-50 flex items-start justify-center bg-[#24221d]/40 px-4 py-8 sm:py-12" @mousedown.self="close">
+      <div v-if="modelValue" class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#24221d]/40 px-4 py-5 sm:py-12" @mousedown.self="close">
         <Transition name="modal-pop" appear>
           <div v-if="modelValue" role="dialog" aria-modal="true" aria-label="Add group member" class="relative w-full max-w-lg rounded-2xl border border-[#e2ddd0] bg-[#fbfaf6] shadow-[0_24px_60px_-20px_rgba(36,34,29,0.35)]">
             <button type="button" class="absolute top-6 right-6 flex size-8 items-center justify-center rounded-full text-[#a49c88] hover:bg-[#f1eee7] hover:text-[#24221d]" aria-label="Close" @click="close">

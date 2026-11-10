@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-[#f1eee7] p-5 sm:p-8">
-     <div class="mx-auto max-w-[1200px] rounded-2xl border border-[#e2ddd0] bg-[#fbfaf6] p-6 shadow-[0_1px_2px_rgba(36,34,29,0.04)] sm:p-8">
+  <div class="bg-[#f1eee7] p-3 sm:p-8">
+     <div class="mx-auto max-w-[1200px] rounded-2xl border border-[#e2ddd0] bg-[#fbfaf6] p-4 shadow-[0_1px_2px_rgba(36,34,29,0.04)] sm:p-8">
       <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <p class="mt-1 text-sm text-[#8c8571]">Manage the categories, subcategories, and brands available to your material library.</p>

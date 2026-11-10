@@ -12,7 +12,7 @@
 <template>
   <Teleport to="body">
     <Transition name="modal-fade">
-      <div v-if="modelValue" class="fixed inset-0 z-50 flex items-start justify-center bg-[#24221d]/40 px-4 py-8 sm:py-12" @mousedown.self="close">
+      <div v-if="modelValue" class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#24221d]/40 px-4 py-5 sm:py-12" @mousedown.self="close">
         <Transition name="modal-pop" appear>
           <div
             v-if="modelValue"

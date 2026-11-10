@@ -1,12 +1,12 @@
 <template>
   <aside
-    class="fixed inset-y-0 left-0 z-30 flex min-h-screen flex-col overflow-y-auto border-r border-rule bg-paper transition-[width,padding] duration-200 ease-in-out"
-    :class="collapsed ? 'w-[72px] px-3 py-7' : 'w-60 px-5 py-7'"
+    class="app-sidebar fixed inset-y-0 left-0 z-30 flex min-h-screen flex-col overflow-y-auto border-r border-rule bg-paper transition-[width,padding] duration-200 ease-in-out"
+    :class="[collapsed ? 'w-[72px] px-3 py-7' : 'w-60 px-5 py-7', { 'is-mobile-open': !collapsed }]"
   >
     <nav class="flex flex-1 flex-col gap-1">
       <button
         type="button"
-        class="mb-2 flex min-h-10 w-full items-center justify-center rounded-lg border-0 bg-transparent px-[0.7rem] py-[0.55rem] text-[#6b6156] transition-[background,color,padding] duration-150 hover:bg-[#f4f1ea] hover:text-[#33302b] cursor-pointer"
+        class="desktop-sidebar-toggle mb-2 flex min-h-10 w-full items-center justify-center rounded-lg border-0 bg-transparent px-[0.7rem] py-[0.55rem] text-[#6b6156] transition-[background,color,padding] duration-150 hover:bg-[#f4f1ea] hover:text-[#33302b] cursor-pointer"
         :class="{ 'p-[0.6rem]': collapsed }"
         :aria-expanded="!collapsed"
         :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
@@ -35,6 +35,7 @@
             : 'gap-[0.65rem]'"
         active-class="bg-[#f4f1ea] text-[#33302b]"
         :title="collapsed ? item.label : undefined"
+        @click="closeMobileNavigation"
       >
         <svg
           class="size-4 shrink-0 fill-none stroke-current stroke-[1.75] [stroke-linecap:round] [stroke-linejoin:round]"
@@ -46,6 +47,22 @@
         <span v-if="!collapsed" class="overflow-hidden text-ellipsis">{{ item.label }}</span>
       </NuxtLink>
     </nav>
+
+    <div class="mt-6">
+      <button
+        type="button"
+        class="flex w-full items-center rounded-lg px-[0.7rem] py-[0.55rem] text-[0.9rem] font-medium text-[#6b6156] transition-[background,color,padding,justify-content] duration-200 hover:bg-[#f4f1ea] hover:text-[#33302b] cursor-pointer"
+        :class="collapsed ? 'justify-center gap-0 p-[0.6rem]' : 'gap-[0.65rem]'"
+        :title="collapsed ? 'Send feedback' : undefined"
+        @click="openFeedback"
+      >
+        <svg class="size-4 shrink-0 fill-none stroke-current stroke-[1.75] [stroke-linecap:round] [stroke-linejoin:round]" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z" />
+          <path d="M8 12h.01M12 12h.01M16 12h.01" />
+        </svg>
+        <span v-if="!collapsed">Send feedback</span>
+      </button>
+    </div>
 
     <div class="mt-6 border-t border-rule pt-5">
       <button
@@ -62,6 +79,8 @@
         <span v-if="!collapsed">{{ loggingOut ? 'Signing out…' : 'Log out' }}</span>
       </button>
     </div>
+
+    <FeedbackModal v-model="showFeedbackModal" />
   </aside>
 </template>
 
@@ -69,6 +88,7 @@
 const { user, logout } = useAuth()
 const router = useRouter()
 const loggingOut = ref(false)
+const showFeedbackModal = ref(false)
 
 // Shared across components (e.g. a layout that needs to shift main content)
 // and persisted across visits via cookie.
@@ -81,6 +101,17 @@ watch(collapsed, (value) => {
 
 function toggleCollapsed() {
   collapsed.value = !collapsed.value
+}
+
+function closeMobileNavigation() {
+  if (import.meta.client && window.matchMedia('(max-width: 767px)').matches) {
+    collapsed.value = true
+  }
+}
+
+function openFeedback() {
+  showFeedbackModal.value = true
+  closeMobileNavigation()
 }
 
 async function handleLogout() {

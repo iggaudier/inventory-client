@@ -20,5 +20,10 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.2"
+  },
+  "overrides": {
+    "@vercel/analytics": {
+      "vue-router": "$vue-router"
+    }
   }
 }

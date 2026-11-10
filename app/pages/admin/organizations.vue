@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-[#f1eee7] p-5 sm:p-8">
-    <div class="mx-auto max-w-[1200px] rounded-2xl border border-[#e2ddd0] bg-[#fbfaf6] p-6 shadow-[0_1px_2px_rgba(36,34,29,0.04)] sm:p-8">
+  <div class="bg-[#f1eee7] p-3 sm:p-8">
+    <div class="mx-auto max-w-[1200px] rounded-2xl border border-[#e2ddd0] bg-[#fbfaf6] p-4 shadow-[0_1px_2px_rgba(36,34,29,0.04)] sm:p-8">
       <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
         <p class="mt-1 text-sm text-[#8c8571]">Manage every organization on the platform.</p>
         <button type="button" class="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[#b8834a] px-4 py-2.5 text-sm font-medium text-[#fbfaf6] transition-colors hover:bg-[#a6733d]" @click="openCreate">
