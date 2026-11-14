@@ -12,15 +12,7 @@
         :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
         @click="toggleCollapsed"
       >
-        <svg
-          class="size-4 fill-none stroke-current stroke-[1.75] transition-transform duration-200 [stroke-linecap:round] [stroke-linejoin:round]"
-          :class="{ 'rotate-180': collapsed }"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
-          <path d="M9 4.5v15M13 9l-3 3 3 3" />
-        </svg>
+        <img src="/images/lily-logo.svg" alt="Lily" class="size-8 rounded-lg" />
       </button>
 
       <NuxtLink
