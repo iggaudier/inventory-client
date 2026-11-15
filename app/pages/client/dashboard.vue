@@ -3,7 +3,7 @@
     <section class="overflow-hidden rounded-2xl border border-[#e2ddd0] bg-[#fbfaf6] shadow-[0_1px_2px_rgba(36,34,29,0.04)]">
       <div class="relative grid gap-8 px-6 py-7 sm:px-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
         <div class="absolute top-0 left-0 h-1 w-28" aria-hidden="true" />
-        <div><p class="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-[#a17647]">Inventory pulse</p><h1 class="mt-2 text-2xl font-semibold tracking-[-0.03em] text-[#24221d] sm:text-3xl">A clear view of your catalogue.</h1><p class="mt-2 max-w-xl text-sm text-[#766f61]">See what is available, where your collection is concentrated, and the newest pieces added to your library.</p></div>
+        <div><p class="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-[#a17647]">Inventory pulse</p><p v-if="organizationName" class="mt-2 text-3xl font-medium text-[#8a6238]">{{ organizationName }}</p><p class="mt-2 max-w-xl text-sm text-[#766f61]">See what is available, where your collection is concentrated, and the newest pieces added to your library.</p></div>
         <NuxtLink to="/client/product" class="inline-flex w-fit items-center gap-2 rounded-lg bg-[#b8834a] px-4 py-2.5 text-sm font-medium text-[#fbfaf6] transition-colors hover:bg-[#a6733d]">Browse products <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" /></svg></NuxtLink>
       </div>
       <div class="border-t border-[#e2ddd0] px-6 py-5 sm:px-8">
@@ -47,6 +47,7 @@ const { data, pending } = await useAsyncData('dashboard', () => api('/dashboard'
 const summary = computed(() => data.value?.data?.summary ?? { total_products: 0, in_stock: 0, out_of_stock: 0, categories: 0, brands: 0, users: 0, organizations: 0 })
 const isSuperAdmin = computed(() => user.value?.role === 'super-admin')
 const isGroupAdmin = computed(() => user.value?.role === 'group-admin')
+const organizationName = computed(() => isSuperAdmin.value ? null : data.value?.data?.organization?.name ?? null)
 const recentProducts = computed<DashboardProduct[]>(() => data.value?.data?.recent_products ?? [])
 const categoryMix = computed<CategoryMix[]>(() => data.value?.data?.category_mix ?? [])
 const largestCategory = computed(() => Math.max(...categoryMix.value.map((category) => category.count), 1))

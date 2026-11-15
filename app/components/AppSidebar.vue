@@ -56,7 +56,22 @@
       </button>
     </div>
 
-    <div class="mt-6 border-t border-rule pt-5">
+    <div class="mt-6 space-y-1 border-t border-rule pt-5">
+      <NuxtLink
+        to="/client/account-settings"
+        class="flex items-center overflow-hidden rounded-lg px-[0.7rem] py-[0.55rem] text-[0.9rem] font-medium whitespace-nowrap text-[#6b6156] transition-[background,color,padding,justify-content] duration-200 hover:bg-[#f4f1ea] hover:text-[#33302b]"
+        :class="collapsed ? 'justify-center gap-0 p-[0.6rem]' : 'gap-[0.65rem]'"
+        active-class="bg-[#f4f1ea] text-[#33302b]"
+        :title="collapsed ? 'Account settings' : undefined"
+        @click="closeMobileNavigation"
+      >
+        <svg class="size-4 shrink-0 fill-none stroke-current stroke-[1.75] [stroke-linecap:round] [stroke-linejoin:round]" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06-2.12 2.12-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51v.08h-3v-.08a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06-2.12-2.12.06-.06A1.65 1.65 0 0 0 7.2 15a1.65 1.65 0 0 0-1.51-1H5.6v-3h.09A1.65 1.65 0 0 0 7.2 10a1.65 1.65 0 0 0-.33-1.82l-.06-.06L8.93 6l.06.06A1.65 1.65 0 0 0 10.81 6.4a1.65 1.65 0 0 0 1-1.51V4.8h3v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.34l.06-.06 2.12 2.12-.06.06A1.65 1.65 0 0 0 19.4 10a1.65 1.65 0 0 0 1.51 1H21v3h-.09A1.65 1.65 0 0 0 19.4 15Z" />
+        </svg>
+        <span v-if="!collapsed">Account settings</span>
+      </NuxtLink>
+
       <button
         type="button"
         class="flex w-full items-center rounded-lg px-[0.7rem] py-[0.55rem] text-[0.9rem] font-medium text-[#6b6156] transition-[background,color,padding,justify-content] duration-200 hover:bg-[#f4f1ea] hover:text-[#33302b] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"

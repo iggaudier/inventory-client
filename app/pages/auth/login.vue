@@ -23,7 +23,7 @@
               v-model="email"
               type="email"
               autocomplete="email"
-              placeholder="you@example.com"
+              placeholder="your.email@example.com"
               class="w-full rounded-[0.6rem] border border-rule bg-paper px-[0.85rem] py-[0.6rem] text-[0.95rem] text-[#33302b] transition-[border-color,box-shadow] duration-200 focus:border-ochre focus:ring-3 focus:ring-[rgba(184,131,74,0.15)] focus:outline-none"
             />
           </div>
