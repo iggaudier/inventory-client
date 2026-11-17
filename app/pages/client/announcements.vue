@@ -31,7 +31,7 @@
     <section class="mt-6">
       <div v-if="pending" class="space-y-4"><div v-for="item in 3" :key="item" class="h-44 animate-pulse rounded-2xl border border-[#e2ddd0] bg-[#fbfaf6]" /></div>
       <div v-else-if="announcements.length" class="space-y-4">
-        <article v-for="announcement in announcements" :key="announcement.id" class="overflow-hidden rounded-2xl border border-[#e2ddd0] bg-[#fbfaf6] shadow-[0_1px_2px_rgba(36,34,29,0.04)]">
+        <article v-for="announcement in announcements" :key="announcement.id" v-announcement-read="announcement.id" class="overflow-hidden rounded-2xl border border-[#e2ddd0] bg-[#fbfaf6] shadow-[0_1px_2px_rgba(36,34,29,0.04)]">
           <button v-if="isImage(announcement.media_type) && announcement.media_url" type="button" class="group relative block w-full cursor-zoom-in overflow-hidden bg-[#eee8dc]" :aria-label="`View image for ${announcement.title}`" @click="viewImage(announcement)"><img :src="announcement.media_url" :alt="announcement.title" class="max-h-[28rem] w-full object-cover transition duration-200 group-hover:scale-[1.01]" loading="lazy" /><span class="absolute right-4 bottom-4 rounded-full bg-[#24221d]/75 px-3 py-1.5 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">View media</span></button>
           <video v-else-if="announcement.media_url" class="max-h-[28rem] w-full bg-[#24221d]" controls preload="metadata"><source :src="announcement.media_url" :type="announcement.media_type ?? undefined" />Your browser does not support this video.</video>
           <div class="p-6 sm:p-7"><div class="flex flex-wrap items-center justify-between gap-3"><div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#857d6f]"><span class="font-medium text-[#8a6238]">Posted by {{ announcement.created_by?.name ?? 'Platform administration' }}</span><span aria-hidden="true">•</span><time :datetime="announcement.created_at">{{ formatDate(announcement.created_at) }}</time></div><div v-if="isSuperAdmin" class="flex items-center gap-2"><button type="button" class="rounded-lg border border-[#e2ddd0] px-2.5 py-1.5 text-xs font-medium text-[#4d493e] hover:bg-[#f1eee7]" @click="editAnnouncement(announcement)">Edit</button><button type="button" class="rounded-lg border border-[#f0d3cc] bg-[#fdf4f2] px-2.5 py-1.5 text-xs font-medium text-[#a8493a] hover:bg-[#f7e6e3]" @click="deleteAnnouncement(announcement)">Delete</button></div></div><h2 class="mt-3 text-xl font-semibold tracking-[-0.02em] text-[#24221d]">{{ announcement.title }}</h2><p class="mt-3 whitespace-pre-line break-words [overflow-wrap:anywhere] text-sm leading-6 text-[#5f594d]">{{ announcementPreview(announcement) }}</p><button v-if="isLongBody(announcement.body)" type="button" class="cursor-pointer mt-2 text-sm font-medium text-[#8a6238] hover:text-[#6f4c29] hover:underline" :aria-expanded="isExpanded(announcement.id)" @click="toggleExpanded(announcement.id)">{{ isExpanded(announcement.id) ? 'Read less' : 'Read more' }}</button></div>
@@ -57,6 +57,28 @@ definePageMeta({
 type Announcement = { id: number; title: string; body: string; media_url?: string | null; media_type?: string | null; created_at: string; created_by?: { name: string } | null }
 const api = useApi()
 const { user } = useAuth()
+const { markRead, refreshUnreadCount } = useAnnouncementNotifications()
+const readObservers = new Map<Element, IntersectionObserver>()
+const vAnnouncementRead = {
+  mounted(element: HTMLElement, binding: { value: number }) {
+    const observer = new IntersectionObserver(async ([entry]) => {
+      if (!entry?.isIntersecting || document.visibilityState !== 'visible') return
+      observer.unobserve(element)
+      try { await markRead(binding.value) }
+      catch { if (element.isConnected) observer.observe(element) }
+    }, { threshold: 0.1 })
+    readObservers.set(element, observer)
+    observer.observe(element)
+  },
+  unmounted(element: HTMLElement) {
+    readObservers.get(element)?.disconnect()
+    readObservers.delete(element)
+  },
+}
+onBeforeUnmount(() => {
+  readObservers.forEach(observer => observer.disconnect())
+  readObservers.clear()
+})
 const page = ref(1)
 const composerOpen = ref(false)
 const publishing = ref(false)
@@ -106,7 +128,7 @@ async function publish() {
 
 async function deleteAnnouncement(announcement: Announcement) {
   if (!confirm(`Delete "${announcement.title}"? This cannot be undone.`)) return
-  try { await api(`/announcements/${announcement.id}`, { method: 'DELETE' }); if (announcements.value.length === 1 && page.value > 1) page.value--; else await refresh() }
+  try { await api(`/announcements/${announcement.id}`, { method: 'DELETE' }); if (announcements.value.length === 1 && page.value > 1) page.value--; else await refresh(); await refreshUnreadCount() }
   catch (error: any) { formError.value = error?.data?.message ?? 'Unable to delete the announcement.' }
 }
 </script>
