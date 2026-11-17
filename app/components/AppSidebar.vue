@@ -19,7 +19,7 @@
         v-for="item in visibleNavItems"
         :key="item.to"
         :to="item.to"
-        class="flex items-center overflow-hidden rounded-lg px-[0.7rem] py-[0.55rem] text-[0.9rem] font-medium whitespace-nowrap text-[#6b6156] transition-[background,color,padding,justify-content] duration-200 hover:bg-[#f4f1ea] hover:text-[#33302b]"
+        class="relative flex items-center overflow-hidden rounded-lg px-[0.7rem] py-[0.55rem] text-[0.9rem] font-medium whitespace-nowrap text-[#6b6156] transition-[background,color,padding,justify-content] duration-200 hover:bg-[#f4f1ea] hover:text-[#33302b]"
         :class="collapsed
           ? 'justify-center gap-0 p-[0.6rem]'
           : item.parent === 'products'
@@ -37,6 +37,13 @@
           <path v-for="path in navIconPaths[item.icon]" :key="path" :d="path" />
         </svg>
         <span v-if="!collapsed" class="overflow-hidden text-ellipsis">{{ item.label }}</span>
+        <span
+          v-if="item.icon === 'megaphone' && unreadCount > 0"
+          class="flex min-w-4 shrink-0 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold leading-4 text-white"
+          :class="collapsed ? 'absolute right-0 top-0' : 'ml-auto'"
+          role="status"
+          :aria-label="`${unreadCount} unread announcements`"
+        >{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
       </NuxtLink>
     </nav>
 
@@ -93,6 +100,21 @@
 
 <script setup lang="ts">
 const { user, logout } = useAuth()
+const { unreadCount, refreshUnreadCount } = useAnnouncementNotifications()
+let announcementPoll: ReturnType<typeof setInterval> | undefined
+watch(() => user.value?.id, () => {
+  unreadCount.value = 0
+  if (import.meta.client) void refreshUnreadCount()
+})
+onMounted(() => {
+  void refreshUnreadCount()
+  announcementPoll = setInterval(() => { void refreshUnreadCount() }, 30_000)
+  window.addEventListener('focus', refreshUnreadCount)
+})
+onBeforeUnmount(() => {
+  clearInterval(announcementPoll)
+  window.removeEventListener('focus', refreshUnreadCount)
+})
 const router = useRouter()
 const loggingOut = ref(false)
 const showFeedbackModal = ref(false)
