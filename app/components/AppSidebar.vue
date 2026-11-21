@@ -102,18 +102,32 @@
 const { user, logout } = useAuth()
 const { unreadCount, refreshUnreadCount } = useAnnouncementNotifications()
 let announcementPoll: ReturnType<typeof setInterval> | undefined
+function refreshVisibleUnreadCount() {
+  if (document.visibilityState === 'visible') void refreshUnreadCount()
+}
+
+function updateAnnouncementPolling() {
+  clearInterval(announcementPoll)
+  announcementPoll = undefined
+  if (document.visibilityState !== 'visible') return
+
+  refreshVisibleUnreadCount()
+  announcementPoll = setInterval(refreshVisibleUnreadCount, 30_000)
+}
+
 watch(() => user.value?.id, () => {
   unreadCount.value = 0
-  if (import.meta.client) void refreshUnreadCount()
+  if (import.meta.client) refreshVisibleUnreadCount()
 })
 onMounted(() => {
-  void refreshUnreadCount()
-  announcementPoll = setInterval(() => { void refreshUnreadCount() }, 30_000)
-  window.addEventListener('focus', refreshUnreadCount)
+  updateAnnouncementPolling()
+  document.addEventListener('visibilitychange', updateAnnouncementPolling)
+  window.addEventListener('focus', refreshVisibleUnreadCount)
 })
 onBeforeUnmount(() => {
   clearInterval(announcementPoll)
-  window.removeEventListener('focus', refreshUnreadCount)
+  document.removeEventListener('visibilitychange', updateAnnouncementPolling)
+  window.removeEventListener('focus', refreshVisibleUnreadCount)
 })
 const router = useRouter()
 const loggingOut = ref(false)

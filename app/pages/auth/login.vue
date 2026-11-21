@@ -40,6 +40,8 @@
             />
           </div>
 
+          <NuxtLink to="/auth/forgot-password" class="self-end text-sm font-medium text-ochre hover:underline">Forgot password?</NuxtLink>
+
           <p v-if="errorMsg" class="-mt-1 text-[0.8rem] text-danger">
             {{ errorMsg }}
           </p>
